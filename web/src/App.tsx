@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GameShell, GameTopbar } from "@freeappstore/games";
+import { GameShell, GameTopbar } from "@freegamestore/games";
 
 const DOTS: Record<number, [number, number][]> = {
   1: [[0.5, 0.5]],
