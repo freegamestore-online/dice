@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Shell } from "./components/Shell";
+import { GameShell, GameTopbar } from "@freeappstore/games";
 
 const DOTS: Record<number, [number, number][]> = {
   1: [[0.5, 0.5]],
@@ -81,117 +81,109 @@ export default function App() {
   const sum = values.reduce((a, b) => a + b, 0);
 
   return (
-    <Shell>
-      <div style={{ maxWidth: "560px", margin: "0 auto", padding: "1.5rem 0", textAlign: "center" }}>
-        <h1
-          style={{
-            fontFamily: "Fraunces, serif",
-            fontSize: "1.75rem",
-            fontWeight: 800,
-            marginBottom: "0.25rem",
-          }}
-        >
-          Dice
-        </h1>
-        <p style={{ color: "var(--muted)", marginBottom: "2rem" }}>
-          Tap to roll. Pick how many dice (1-6).
-        </p>
+    <GameShell topbar={<GameTopbar title="Dice" score={sum} />}>
+      <div className="relative w-full h-full">
+        <div style={{ maxWidth: "560px", margin: "0 auto", padding: "1.5rem 0", textAlign: "center" }}>
+          <p style={{ color: "var(--muted)", marginBottom: "2rem" }}>
+            Tap to roll. Pick how many dice (1-6).
+          </p>
 
-        <div style={{ display: "flex", gap: "0.4rem", justifyContent: "center", marginBottom: "1.75rem" }}>
-          {[1, 2, 3, 4, 5, 6].map((n) => (
-            <button
-              key={n}
-              type="button"
-              onClick={() => setN(n)}
-              disabled={rolling}
-              style={{
-                padding: "0.4rem 0.7rem",
-                border: "1px solid var(--line)",
-                borderRadius: "0.5rem",
-                background: count === n ? "var(--accent)" : "transparent",
-                color: count === n ? "white" : "var(--ink)",
-                fontFamily: "inherit",
-                fontWeight: 600,
-                fontSize: "0.85rem",
-                cursor: rolling ? "wait" : "pointer",
-              }}
-            >
-              {n}
-            </button>
-          ))}
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            gap: "0.85rem",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            marginBottom: "1.75rem",
-          }}
-        >
-          {values.map((v, i) => (
-            <Die key={i} value={v} rolling={rolling} />
-          ))}
-        </div>
-
-        <button
-          type="button"
-          onClick={roll}
-          disabled={rolling}
-          style={{
-            background: "var(--accent)",
-            color: "white",
-            border: 0,
-            padding: "0.85rem 2.5rem",
-            borderRadius: "0.75rem",
-            fontFamily: "inherit",
-            fontWeight: 700,
-            fontSize: "1rem",
-            cursor: rolling ? "wait" : "pointer",
-          }}
-        >
-          {rolling ? "Rolling…" : "Roll"}
-        </button>
-
-        <p
-          style={{
-            marginTop: "1.5rem",
-            fontFamily: "Fraunces, serif",
-            fontSize: "1.4rem",
-            fontWeight: 700,
-          }}
-        >
-          Sum: {sum}
-        </p>
-
-        {history.length > 0 && (
-          <div style={{ marginTop: "2rem" }}>
-            <p
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-                color: "var(--muted)",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Recent rolls
-            </p>
-            <p
-              style={{
-                color: "var(--muted)",
-                fontFamily: "ui-monospace, SF Mono, Menlo, monospace",
-                fontSize: "0.95rem",
-                letterSpacing: "0.15em",
-              }}
-            >
-              {history.join(" · ")}
-            </p>
+          <div style={{ display: "flex", gap: "0.4rem", justifyContent: "center", marginBottom: "1.75rem" }}>
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setN(n)}
+                disabled={rolling}
+                style={{
+                  padding: "0.4rem 0.7rem",
+                  border: "1px solid var(--line)",
+                  borderRadius: "0.5rem",
+                  background: count === n ? "var(--accent)" : "transparent",
+                  color: count === n ? "white" : "var(--ink)",
+                  fontFamily: "inherit",
+                  fontWeight: 600,
+                  fontSize: "0.85rem",
+                  cursor: rolling ? "wait" : "pointer",
+                }}
+              >
+                {n}
+              </button>
+            ))}
           </div>
-        )}
+
+          <div
+            style={{
+              display: "flex",
+              gap: "0.85rem",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              marginBottom: "1.75rem",
+            }}
+          >
+            {values.map((v, i) => (
+              <Die key={i} value={v} rolling={rolling} />
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={roll}
+            disabled={rolling}
+            style={{
+              background: "var(--accent)",
+              color: "white",
+              border: 0,
+              padding: "0.85rem 2.5rem",
+              borderRadius: "0.75rem",
+              fontFamily: "inherit",
+              fontWeight: 700,
+              fontSize: "1rem",
+              cursor: rolling ? "wait" : "pointer",
+            }}
+          >
+            {rolling ? "Rolling…" : "Roll"}
+          </button>
+
+          <p
+            style={{
+              marginTop: "1.5rem",
+              fontFamily: "Fraunces, serif",
+              fontSize: "1.4rem",
+              fontWeight: 700,
+            }}
+          >
+            Sum: {sum}
+          </p>
+
+          {history.length > 0 && (
+            <div style={{ marginTop: "2rem" }}>
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  color: "var(--muted)",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Recent rolls
+              </p>
+              <p
+                style={{
+                  color: "var(--muted)",
+                  fontFamily: "ui-monospace, SF Mono, Menlo, monospace",
+                  fontSize: "0.95rem",
+                  letterSpacing: "0.15em",
+                }}
+              >
+                {history.join(" · ")}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </Shell>
+    </GameShell>
   );
 }
