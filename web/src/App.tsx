@@ -97,6 +97,8 @@ export default function App() {
                 disabled={rolling}
                 style={{
                   padding: "0.4rem 0.7rem",
+                  minHeight: "2.75rem",
+                  minWidth: "2.75rem",
                   border: "1px solid var(--line)",
                   borderRadius: "0.5rem",
                   background: count === n ? "var(--accent)" : "transparent",
