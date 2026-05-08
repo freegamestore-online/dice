@@ -81,7 +81,7 @@ export default function App() {
   const sum = values.reduce((a, b) => a + b, 0);
 
   return (
-    <GameShell topbar={<GameTopbar title="Dice" score={sum} actions={<GameAuth />} />}>
+    <GameShell topbar={<GameTopbar title="Dice" score={sum} actions={<GameAuth />} rules={<div><h3 style={{fontWeight:700}}>Dice</h3><h4 style={{fontWeight:600}}>How to Play</h4><ul><li>Choose 1-6 dice</li><li>Tap Roll to throw</li></ul><h4 style={{fontWeight:600}}>Results</h4><ul><li>Shows each die value</li><li>Displays the total sum</li></ul></div>} />}>
       <div className="relative w-full h-full">
         <div style={{ maxWidth: "560px", margin: "0 auto", padding: "1.5rem 0", textAlign: "center" }}>
           <p style={{ color: "var(--muted)", marginBottom: "2rem" }}>
