@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GameShell, GameTopbar } from "@freegamestore/games";
+import { GameShell, GameTopbar, GameAuth } from "@freegamestore/games";
 
 const DOTS: Record<number, [number, number][]> = {
   1: [[0.5, 0.5]],
@@ -81,7 +81,7 @@ export default function App() {
   const sum = values.reduce((a, b) => a + b, 0);
 
   return (
-    <GameShell topbar={<GameTopbar title="Dice" score={sum} />}>
+    <GameShell topbar={<GameTopbar title="Dice" score={sum} actions={<GameAuth />} />}>
       <div className="relative w-full h-full">
         <div style={{ maxWidth: "560px", margin: "0 auto", padding: "1.5rem 0", textAlign: "center" }}>
           <p style={{ color: "var(--muted)", marginBottom: "2rem" }}>
@@ -122,7 +122,8 @@ export default function App() {
             }}
           >
             {values.map((v, i) => (
-              <Die key={i} value={v} rolling={rolling} />
+              <Die key={i} value={v} rolling={rolling}
+          />
             ))}
           </div>
 
