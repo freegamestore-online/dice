@@ -1,5 +1,13 @@
-import { useState } from "react";
-import { GameShell, GameTopbar, GameAuth } from "@freegamestore/games";
+import { useRef, useState } from "react";
+import { GameShell, GameTopbar, GameAuth, useGameSounds } from "@freegamestore/games";
+
+type SoundsApi = ReturnType<typeof useGameSounds>;
+
+function AudioBridge({ apiRef }: { apiRef: React.MutableRefObject<SoundsApi | null> }) {
+  const sounds = useGameSounds();
+  apiRef.current = sounds;
+  return null;
+}
 
 const DOTS: Record<number, [number, number][]> = {
   1: [[0.5, 0.5]],
@@ -53,10 +61,12 @@ export default function App() {
   const [values, setValues] = useState<number[]>([1, 1]);
   const [rolling, setRolling] = useState(false);
   const [history, setHistory] = useState<number[]>([]);
+  const audioRef = useRef<SoundsApi | null>(null);
 
   function roll() {
     if (rolling) return;
     setRolling(true);
+    audioRef.current?.playDrop();
     // Animate by re-rolling rapidly, then settling on a final value.
     let ticks = 0;
     const id = window.setInterval(() => {
@@ -66,8 +76,13 @@ export default function App() {
         window.clearInterval(id);
         const final = Array.from({ length: count }, () => 1 + Math.floor(Math.random() * 6));
         setValues(final);
-        setHistory((prev) => [final.reduce((a, b) => a + b, 0), ...prev].slice(0, 10));
+        const total = final.reduce((a, b) => a + b, 0);
+        setHistory((prev) => [total, ...prev].slice(0, 10));
         setRolling(false);
+        // "High" result: at or above 80% of the theoretical max (6 * count).
+        if (total >= Math.ceil(count * 6 * 0.8)) {
+          audioRef.current?.playScore();
+        }
       }
     }, 60);
   }
@@ -82,6 +97,7 @@ export default function App() {
 
   return (
     <GameShell topbar={<GameTopbar title="Dice" score={sum} actions={<GameAuth />} rules={<div><h3 style={{fontWeight:700}}>Dice</h3><h4 style={{fontWeight:600}}>How to Play</h4><ul><li>Choose 1-6 dice</li><li>Tap Roll to throw</li></ul><h4 style={{fontWeight:600}}>Results</h4><ul><li>Shows each die value</li><li>Displays the total sum</li></ul></div>} />}>
+      <AudioBridge apiRef={audioRef} />
       <div className="relative w-full h-full">
         <div style={{ maxWidth: "560px", margin: "0 auto", padding: "1.5rem 0", textAlign: "center" }}>
           <p style={{ color: "var(--muted)", marginBottom: "2rem" }}>
