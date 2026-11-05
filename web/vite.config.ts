@@ -37,7 +37,7 @@ export default defineConfig({
       manifest: {
         name: "dice",
         short_name: "dice",
-        description: "dice — free forever",
+        description: "Free dice roller — part of FreeGameStore",
         start_url: "/",
         display: "standalone", orientation: "any",
         background_color: "#0f0f0f",

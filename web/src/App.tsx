@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GameShell, GameTopbar, GameAuth, useGameSounds } from "@freegamestore/games";
 
 type SoundsApi = ReturnType<typeof useGameSounds>;
@@ -62,6 +62,9 @@ export default function App() {
   const [rolling, setRolling] = useState(false);
   const [history, setHistory] = useState<number[]>([]);
   const audioRef = useRef<SoundsApi | null>(null);
+  const intervalRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => () => window.clearInterval(intervalRef.current), []);
 
   function roll() {
     if (rolling) return;
@@ -69,11 +72,11 @@ export default function App() {
     audioRef.current?.playDrop();
     // Animate by re-rolling rapidly, then settling on a final value.
     let ticks = 0;
-    const id = window.setInterval(() => {
+    intervalRef.current = window.setInterval(() => {
       setValues(Array.from({ length: count }, () => 1 + Math.floor(Math.random() * 6)));
       ticks++;
       if (ticks >= 8) {
-        window.clearInterval(id);
+        window.clearInterval(intervalRef.current);
         const final = Array.from({ length: count }, () => 1 + Math.floor(Math.random() * 6));
         setValues(final);
         const total = final.reduce((a, b) => a + b, 0);
@@ -93,10 +96,22 @@ export default function App() {
     setHistory([]);
   }
 
+  // Space rolls (unless a button has focus — it then activates natively).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code !== "Space" || e.repeat) return;
+      if (e.target instanceof Element && e.target.closest("button, a, input, textarea, select")) return;
+      e.preventDefault();
+      roll();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
   const sum = values.reduce((a, b) => a + b, 0);
 
   return (
-    <GameShell topbar={<GameTopbar title="Dice" score={sum} actions={<GameAuth />} rules={<div><h3 style={{fontWeight:700}}>Dice</h3><h4 style={{fontWeight:600}}>How to Play</h4><ul><li>Choose 1-6 dice</li><li>Tap Roll to throw</li></ul><h4 style={{fontWeight:600}}>Results</h4><ul><li>Shows each die value</li><li>Displays the total sum</li></ul></div>} />}>
+    <GameShell topbar={<GameTopbar title="Dice" score={sum} actions={<GameAuth />} rules={<div><h3 style={{fontWeight:700}}>Dice</h3><h4 style={{fontWeight:600}}>How to Play</h4><ul><li>Choose 1-6 dice</li><li>Tap Roll (or press Space) to throw</li></ul><h4 style={{fontWeight:600}}>Results</h4><ul><li>Shows each die value</li><li>Displays the total sum</li></ul></div>} />}>
       <AudioBridge apiRef={audioRef} />
       <div className="relative w-full h-full">
         <div style={{ maxWidth: "560px", margin: "0 auto", padding: "1.5rem 0", textAlign: "center" }}>
